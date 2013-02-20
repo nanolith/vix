@@ -4,14 +4,24 @@ OBJFILES=$(SOURCEFILES:.cpp=.o)
 LIBFILE=../src/libvix.a
 TESTBIN=vixtest
 CXXFLAGS+=-I ../include
-LDFLAGS+=-L../src -lvix
+LDFLAGS+=-L../src -lvix -lprofile_rt
+DYLD_LIBRARY_PATH:=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/:$(DYLD_LIBRARY_PATH)
+export DYLD_LIBRARY_PATH
 
-ALL: $(TESTBIN)
-	./$(TESTBIN)
+ALL: $(TESTBIN) coverage-report
+	lcov -b ../src --directory ../src --zerocounters
+	(cd ../src && ../test/$(TESTBIN))
+	lcov -b ../src --directory ../src --capture --output-file coverage-report/libvix.info
+	lcov --remove coverage-report/libvix.info "/usr/*" -o coverage-report/libvix.info
+	genhtml --no-branch-coverage -o coverage-report coverage-report/libvix.info
 
-$(TESTBIN): $(OBJFILES)
+$(TESTBIN): $(OBJFILES) 
 	$(CXX) -o $(TESTBIN) $(CXXFLAGS) $(OBJFILES) $(LDFLAGS)
+
+coverage-report:
+	mkdir coverage-report
 
 clean:
 	rm -f $(TESTBIN)
 	rm -f $(OBJFILES)
+	rm -rf coverage-report
