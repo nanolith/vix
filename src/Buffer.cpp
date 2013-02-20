@@ -88,6 +88,12 @@ Buffer::erase(const Buffer::iterator& line)
     lines_.erase(line);
 }
 
+void
+Buffer::clear()
+{
+    lines_.clear();
+}
+
 size_t
 Buffer::lines() const
 {

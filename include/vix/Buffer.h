@@ -95,6 +95,11 @@ namespace vix
         void erase(const iterator& line);
          
         /**
+         * Clear the buffer.
+         */
+        void clear();
+
+        /**
          * Returns the number of lines in this buffer.
          */
         size_t lines() const;
