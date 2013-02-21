@@ -5,3 +5,6 @@ a.out
 *.core
 *.gcda
 *.gcno
+*.a
+test/coverage-report
+test/vixtest
