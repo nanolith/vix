@@ -13,3 +13,4 @@ $(LIBFILE): $(OBJFILES)
 clean:
 	rm -f $(LIBFILE)
 	rm -f $(OBJFILES)
+	rm -f *.gcda *.gcno
