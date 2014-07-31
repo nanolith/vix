@@ -2,7 +2,7 @@
 SOURCEFILES=$(wildcard *.cpp)
 OBJFILES=$(SOURCEFILES:.cpp=.o)
 LIBFILE=libvix.a
-CXXFLAGS+=-I ../include --coverage
+CXXFLAGS+=-I ../include --coverage -stdlib=libc++
 
 ALL: $(LIBFILE)
 	echo $(OBJFILES)

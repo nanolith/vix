@@ -3,10 +3,8 @@ SOURCEFILES=$(wildcard *.cpp)
 OBJFILES=$(SOURCEFILES:.cpp=.o)
 LIBFILE=../src/libvix.a
 TESTBIN=vixtest
-CXXFLAGS+=-I ../include
-LDFLAGS+=-L../src -lvix -lprofile_rt
-DYLD_LIBRARY_PATH:=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/:$(DYLD_LIBRARY_PATH)
-export DYLD_LIBRARY_PATH
+CXXFLAGS+=--coverage -stdlib=libc++ -I ../include
+LDFLAGS+=-L../src -lvix -lstdc++
 
 ALL: $(TESTBIN) coverage-report
 	lcov -b ../src --directory ../src --zerocounters
