@@ -27,6 +27,9 @@ protected:
     }
 };
 
+/**
+ * The default constructor should create an empty buffer.
+ */
 TEST_F(BufferTest, defaultConstructor)
 {
     ASSERT_EQ(b.lines(), 0);
@@ -34,6 +37,9 @@ TEST_F(BufferTest, defaultConstructor)
     ASSERT_EQ(b.rbegin(), b.rend());
 }
 
+/**
+ * Without a context, insert adds a line to the beginning of a buffer.
+ */
 TEST_F(BufferTest, globalInsert)
 {
     ASSERT_EQ(b.lines(), 0);
@@ -51,6 +57,9 @@ TEST_F(BufferTest, globalInsert)
     ASSERT_EQ(i, b.end());
 }
 
+/**
+ * It should be possible to iterate all lines of a constant Buffer.
+ */
 TEST_F(BufferTest, constantIteration)
 {
     b.insert(secondLine);
@@ -66,6 +75,9 @@ TEST_F(BufferTest, constantIteration)
     ASSERT_EQ(ci, b.end());
 }
 
+/**
+ * Without any context, append adds a line to the end of a Buffer.
+ */
 TEST_F(BufferTest, append)
 {
     b.append(firstLine);
@@ -79,6 +91,9 @@ TEST_F(BufferTest, append)
     ASSERT_EQ(i, b.end());
 }
 
+/**
+ * insertBefore adds a line before the given line iterator.
+ */
 TEST_F(BufferTest, insertBefore)
 {
     b.append(firstLine);
@@ -101,6 +116,9 @@ TEST_F(BufferTest, insertBefore)
     ASSERT_EQ(i, b.end());
 }
 
+/**
+ * erase removes the line pointed to by the given iterator from a Buffer.
+ */
 TEST_F(BufferTest, erase)
 {
     b.append(firstLine);
@@ -115,6 +133,10 @@ TEST_F(BufferTest, erase)
     ASSERT_EQ(i, b.end());
 }
 
+/**
+ * appendAfter appends the given line after the line pointed to by the given
+ * iterator.
+ */
 TEST_F(BufferTest, appendAfter)
 {
     b.append(firstLine);
@@ -133,6 +155,9 @@ TEST_F(BufferTest, appendAfter)
     ASSERT_EQ(i, b.end());
 }
 
+/**
+ * Check that appendAfter appends the line after a newly inserted line.
+ */
 TEST_F(BufferTest, appendAfterEnd)
 {
     b.append(firstLine);
@@ -148,6 +173,9 @@ TEST_F(BufferTest, appendAfterEnd)
     ASSERT_EQ(i, b.end());
 }
 
+/**
+ * When the Buffer is empty, appendAfter should work just like append.
+ */
 TEST_F(BufferTest, appendAfterEmpty)
 {
     b.append(b.begin(), firstLine);
