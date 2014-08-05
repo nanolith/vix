@@ -4,6 +4,9 @@
 
 #include <memory>
 
+#include "BufferChangeObserverMock.h"
+
+using namespace std;
 using namespace vix;
 
 class BufferTest : public ::testing::Test
@@ -184,4 +187,108 @@ TEST_F(BufferTest, appendAfterEmpty)
     ASSERT_EQ(i->str(), firstLine.str());
     ++i;
     ASSERT_EQ(i, b.end());
+}
+
+/**
+ * When a line is inserted into a Buffer, all observers are notified that the
+ * buffer has changed.
+ */
+TEST_F(BufferTest, insertNotification)
+{
+    auto observerMock = make_shared<BufferChangeObserverMock>();
+
+    //add our mock observer.
+    b.addObserver(observerMock);
+
+    //at this point, our observer should not have been called.
+    ASSERT_FALSE(VALIDATE(*observerMock, onBufferChanged).called(&b));
+
+    //insert a line
+    b.insert(firstLine);
+
+    //the observer is called with an onBufferChanged event on insert.
+    EXPECT_TRUE(VALIDATE(*observerMock, onBufferChanged).called(&b));
+
+    //The observer mock should now be clear.
+    ASSERT_FALSE(VALIDATE(*observerMock, onBufferChanged).called(&b));
+
+    //insert a line before the current line.
+    b.insert(b.begin(), secondLine);
+
+    //the observer is called with an onBufferChanged event on insert.
+    EXPECT_TRUE(VALIDATE(*observerMock, onBufferChanged).called(&b));
+}
+
+/**
+ * When a line is appended into a Buffer, all observers are notified that the
+ * buffer has changed.
+ */
+TEST_F(BufferTest, appendNotification)
+{
+    auto observerMock = make_shared<BufferChangeObserverMock>();
+
+    //add our mock observer.
+    b.addObserver(observerMock);
+
+    //at this point, our observer should not have been called.
+    ASSERT_FALSE(VALIDATE(*observerMock, onBufferChanged).called(&b));
+
+    //append a line
+    b.append(firstLine);
+
+    //the observer is called with an onBufferChanged event on insert.
+    EXPECT_TRUE(VALIDATE(*observerMock, onBufferChanged).called(&b));
+
+    //The observer mock should now be clear.
+    ASSERT_FALSE(VALIDATE(*observerMock, onBufferChanged).called(&b));
+
+    //insert a line before the current line.
+    b.append(b.begin(), secondLine);
+
+    //the observer is called with an onBufferChanged event on insert.
+    EXPECT_TRUE(VALIDATE(*observerMock, onBufferChanged).called(&b));
+}
+
+/**
+ * When a line is erased from a Buffer, Buffer notifies all observers that it
+ * has changed.
+ */
+TEST_F(BufferTest, eraseNotification)
+{
+    auto observerMock = make_shared<BufferChangeObserverMock>();
+
+    //append a line
+    b.append(firstLine);
+
+    //add our mock observer.
+    b.addObserver(observerMock);
+
+    //at this point, our observer should not have been called.
+    ASSERT_FALSE(VALIDATE(*observerMock, onBufferChanged).called(&b));
+
+    //erase the line
+    b.erase(b.begin());
+
+    //the observer is called with an onBufferChanged event on erase.
+    EXPECT_TRUE(VALIDATE(*observerMock, onBufferChanged).called(&b));
+}
+
+/**
+ * When a Buffer is cleared, all observers are notified.
+ */
+TEST_F(BufferTest, clearNotification)
+{
+    auto observerMock = make_shared<BufferChangeObserverMock>();
+
+    //add our mock observer.
+    b.addObserver(observerMock);
+
+    //at this point, our observer should not have been called.
+    ASSERT_FALSE(VALIDATE(*observerMock, onBufferChanged).called(&b));
+
+    //clear the buffer
+    b.clear();
+
+    //the observer is called with an onBufferChanged event on clear.
+    EXPECT_TRUE(VALIDATE(*observerMock, onBufferChanged).called(&b));
 }

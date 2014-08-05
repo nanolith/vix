@@ -95,6 +95,9 @@ void
 Buffer::insert(const Line& newLine)
 {
     lines_.push_front(newLine);
+
+    //let the observers know that the buffer has changed.
+    notifyChanged();
 }
 
 /**
@@ -104,6 +107,9 @@ void
 Buffer::append(const Line& newLine)
 {
     lines_.push_back(newLine);
+
+    //let the observers know that the buffer has changed.
+    notifyChanged();
 }
 
 /**
@@ -113,6 +119,9 @@ void
 Buffer::insert(const Buffer::iterator& before, const Line& newLine)
 {
     lines_.insert(before, newLine);
+
+    //let the observers know that the buffer has changed.
+    notifyChanged();
 }
 
 /**
@@ -134,6 +143,10 @@ Buffer::append(const Buffer::iterator& after, const Line& newLine)
         //past the end of the list.
         lines_.insert(position, newLine);
     }
+
+
+    //let the observers know that the buffer has changed.
+    notifyChanged();
 }
 
 /**
@@ -143,6 +156,9 @@ void
 Buffer::erase(const Buffer::iterator& line)
 {
     lines_.erase(line);
+
+    //let the observers know that the buffer has changed.
+    notifyChanged();
 }
 
 /**
@@ -152,6 +168,9 @@ void
 Buffer::clear()
 {
     lines_.clear();
+
+    //let the observers know that the buffer has changed.
+    notifyChanged();
 }
 
 /**
@@ -161,4 +180,14 @@ size_t
 Buffer::lines() const
 {
     return lines_.size();
+}
+
+/**
+ * Notify all observers that the buffer has been changed.
+ */
+void
+Buffer::notifyChanged()
+{
+    notify(
+        [=](BufferChangeObserver& o) { o.onBufferChanged(this); });
 }

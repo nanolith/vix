@@ -2,14 +2,30 @@
 # define VIX_BUFFER_HEADER_GUARD
 
 #include <list>
+#include <pattern/Observer.h>
 #include <vix/Line.h>
 
 namespace vix
 {
     /**
+     * Forward declaration for Buffer.
+     */
+    class Buffer;
+
+    /**
+     * This observer interface can be used to register for buffer change
+     * events.
+     */
+    class BufferChangeObserver
+    {
+    public:
+        virtual void onBufferChanged(const Buffer* changedBuffer) = 0;
+    };
+
+    /**
      * This class represents a physical buffer in memory.
      */
-    class Buffer
+    class Buffer : public pattern::Observable<BufferChangeObserver>
     {
         typedef
         std::list<Line>
@@ -106,6 +122,11 @@ namespace vix
 
     private:
         LineList lines_;
+
+        /**
+         * Notify all observers that the buffer has been changed.
+         */
+        void notifyChanged();
     };
 }
 
