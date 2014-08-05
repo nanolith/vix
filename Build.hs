@@ -23,9 +23,13 @@ main = shakeArgs shakeOptions{shakeFiles="_build/"} $ do
     want ["_build/checked/libvix" <.> "a"]
     want ["_build/test/coverage-report/index.html"]
 
+    let patternDir = ".." </> "pattern"
+    let patternInclude = " -I " ++ (patternDir </> "include")
+    let mockDir = ".." </> "mock"
+    let mockInclude = " -I " ++ (mockDir </> "include")
     let gtestDir = ".." </> "gtest"
-    let checkedCxxflags = "--coverage -std=c++11 -stdlib=libc++ -O0 -I ./include -I " ++ (gtestDir </> "include") ++ " -I " ++ gtestDir
-    let releaseCxxflags = "-std=c++11 -stdlib=libc++ -O3 -I ./include"
+    let checkedCxxflags = "--coverage -std=c++11 -stdlib=libc++ -O0 -I ./include -I " ++ (gtestDir </> "include") ++ " -I " ++ gtestDir ++ patternInclude ++ mockInclude
+    let releaseCxxflags = "-std=c++11 -stdlib=libc++ -O3 -I ./include" ++ patternInclude ++ mockInclude
 
     phony "clean" $ do
         removeFilesAfter "_build" ["//*"]
@@ -48,7 +52,6 @@ main = shakeArgs shakeOptions{shakeFiles="_build/"} $ do
     let testlink = "-lstdc++ -L _build/checked -lvix " ++ (gtestDir </> "src" </> "gtest-all.cc")
 
     "_build/test/coverage-report/index.html" *> \out -> do
-        need ["_build/checked/libvix" <.> "a"]
         need ["_build/test/vixtest" <.> exe]
 
         () <- cmd "mkdir -p _build/test/coverage-report"
@@ -58,6 +61,7 @@ main = shakeArgs shakeOptions{shakeFiles="_build/"} $ do
         cmd "genhtml --no-branch-coverage -o _build/test/coverage-report _build/test/coverage-report/libvix.info"
 
     "_build/test/vixtest" <.> exe *> \out -> do
+        need ["_build/checked/libvix" <.> "a"]
         cs <- getDirectoryFiles "" ["test//*.cpp"]
         let os = ["_build" </> "checked" </> c -<.> "o" | c <- cs]
         need os
