@@ -162,6 +162,30 @@ Buffer::erase(const Buffer::iterator& line)
 }
 
 /**
+ * Replace a line.
+ */
+void
+Buffer::replace(const iterator& line, const Line& newLine)
+{
+    //this only works if the iterator is a valid line
+    if (line != lines_.end())
+    {
+        //insert the new line before this line.
+        auto nl = lines_.insert(line, newLine);
+
+        //the iterator points to the new line before the line to be erased.
+        //increment to the line to be erased.
+        ++nl;
+
+        //now, erase the old line.
+        lines_.erase(nl);
+
+        //notify observers that the buffer has changed
+        notifyChanged();
+    }
+}
+
+/**
  * Clear the buffer.
  */
 void

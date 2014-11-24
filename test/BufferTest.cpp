@@ -137,6 +137,44 @@ TEST_F(BufferTest, erase)
 }
 
 /**
+ * replace replaces the given line with the new line.
+ */
+TEST_F(BufferTest, replace)
+{
+    b.append(firstLine);
+    b.append(secondLine);
+
+    //replace the first line
+    b.replace(b.begin(), thirdLine);
+
+    i = b.begin();
+    ASSERT_EQ(i->str(), thirdLine.str());
+    ++i;
+    ASSERT_EQ(i->str(), secondLine.str());
+    ++i;
+    ASSERT_EQ(i, b.end());
+}
+
+/**
+ * Attempting to replace the end of the buffer does nothing.
+ */
+TEST_F(BufferTest, replaceEndFails)
+{
+    b.append(firstLine);
+    b.append(secondLine);
+
+    //replace nothing
+    b.replace(b.end(), thirdLine);
+
+    i = b.begin();
+    ASSERT_EQ(i->str(), firstLine.str());
+    ++i;
+    ASSERT_EQ(i->str(), secondLine.str());
+    ++i;
+    ASSERT_EQ(i, b.end());
+}
+
+/**
  * appendAfter appends the given line after the line pointed to by the given
  * iterator.
  */
@@ -268,6 +306,30 @@ TEST_F(BufferTest, eraseNotification)
 
     //erase the line
     b.erase(b.begin());
+
+    //the observer is called with an onBufferChanged event on erase.
+    EXPECT_TRUE(VALIDATE(*observerMock, onBufferChanged).called(&b));
+}
+
+/**
+ * When a line is replaced in a Buffer, Buffer notifies all observers that it
+ * has changed.
+ */
+TEST_F(BufferTest, replaceNotification)
+{
+    auto observerMock = make_shared<BufferChangeObserverMock>();
+
+    //append a line
+    b.append(firstLine);
+
+    //add our mock observer.
+    b.addObserver(observerMock);
+
+    //at this point, our observer should not have been called.
+    ASSERT_FALSE(VALIDATE(*observerMock, onBufferChanged).called(&b));
+
+    //erase the line
+    b.replace(b.begin(), secondLine);
 
     //the observer is called with an onBufferChanged event on erase.
     EXPECT_TRUE(VALIDATE(*observerMock, onBufferChanged).called(&b));

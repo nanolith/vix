@@ -111,6 +111,11 @@ namespace vix
         void erase(const iterator& line);
          
         /**
+         * Replace a line.
+         */
+        void replace(const iterator& line, const Line& newLine);
+
+        /**
          * Clear the buffer.
          */
         void clear();
