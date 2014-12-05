@@ -29,7 +29,7 @@ main = shakeArgs shakeOptions{shakeFiles="_build/"} $ do
     let mockInclude = " -I " ++ (mockDir </> "include")
     let gtestDir = ".." </> "gtest"
     let checkedCxxflags = "--coverage -std=c++11 -stdlib=libc++ -O0 -I ./include -I " ++ (gtestDir </> "include") ++ " -I " ++ gtestDir ++ patternInclude ++ mockInclude
-    let releaseCxxflags = "-std=c++11 -stdlib=libc++ -O3 -I ./include" ++ patternInclude ++ mockInclude
+    let releaseCxxflags = "-std=c++11 -stdlib=libc++ -DNDEBUG -O3 -I ./include" ++ patternInclude ++ mockInclude
 
     phony "clean" $ do
         removeFilesAfter "_build" ["//*"]
