@@ -6,7 +6,8 @@ interested yet.  I am a big fan of Bram Moolenaar's [Vim][vim], and use it for
 my day-to-day programming work.  I highly suggest you start there if you are
 looking for an excellent Vi clone.
 
-##Building
+Building
+--------
 
 To build vix, you will need a relatively recent version of Clang, Google Test,
 Haskell (ghc running under Haskell Platform is best supported), and shake.  The
